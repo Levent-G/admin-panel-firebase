@@ -6,6 +6,7 @@
     "@emotion/react": "^11.12.0",
     "@emotion/styled": "^11.12.0",
     "@gib-ui/core": "^0.1.36",
+    "@hookform/resolvers": "^3.9.0",
     "@mui/icons-material": "^5.16.4",
     "@mui/material": "^5.16.4",
     "@testing-library/jest-dom": "^5.17.0",
@@ -14,9 +15,11 @@
     "firebase": "^10.12.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.52.1",
     "react-router-dom": "^6.25.1",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yup": "^1.4.0"
   },
   "scripts": {
     "start": "react-scripts start",

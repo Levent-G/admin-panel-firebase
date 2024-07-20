@@ -1,10 +1,10 @@
 "use client";
-import { Box, Breadcrumbs, Typography } from "@gib-ui/core";
+import { Alert, Box, Breadcrumbs, Typography } from "@gib-ui/core";
 import React from "react";
 
 const withCustomLayout = (WrappedComponent, layoutProps) => {
   const PageLayout = (props) => {
-    const { title, titleColor, breadcrumbs } = layoutProps;
+    const { title, titleColor, breadcrumbs, alertText, severity } = layoutProps;
 
     return (
       <Box
@@ -13,8 +13,10 @@ const withCustomLayout = (WrappedComponent, layoutProps) => {
           display: "flex",
           flexDirection: "column",
           gap: "1rem",
+          width: "100% !important",
         }}
-        ml={5} mt={5}
+        ml={5}
+        mt={5}
       >
         <Box
           sx={{
@@ -35,9 +37,17 @@ const withCustomLayout = (WrappedComponent, layoutProps) => {
               variant="h4"
               fontWeight={600}
               sx={{ color: titleColor, marginTop: "1rem" }}
+              mb={3}
             >
               {title}
             </Typography>
+            <Alert
+              alertText={alertText}
+              id="alertWithTitle"
+              severity={severity ? severity : "info"}
+             
+            
+            />
           </Box>
         </Box>
 
