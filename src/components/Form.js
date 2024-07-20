@@ -1,80 +1,105 @@
-import React from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { Button } from "@gib-ui/core";
 import { Box } from "@mui/material";
 
-// Form şeması
-const schema = yup.object().shape({
-  sayfaName: yup.string().required("Sayfa Adı zorunludur"),
-  // Diğer form elemanları için geçerlilik kuralları ekleyebilirsiniz
-});
+const Form = forwardRef(
+  ({ children, onSubmit, onReset, schema, handleFormCancel }, ref) => {
+    const {
+      control,
+      handleSubmit,
+      reset,
+      getValues,
+      setValue,
+      formState: { errors },
+    } = useForm({
+      resolver: yupResolver(schema),
+    });
 
-// Form bileşeni
-const Form = ({ children, onSubmit, onReset }) => {
-  // react-hook-form kullanımı
-  const { control, handleSubmit, reset} = useForm({
-    resolver: yupResolver(schema),
-  });
+    useImperativeHandle(ref, () => ({
+      resetForm: () => reset(),
+      getValues: () => getValues(),
+      setValue: (name, value) => setValue(name, value),
+    }));
 
- 
+    const handleFormSubmit = (data) => {
+      if (onSubmit) onSubmit(data);
+    };
 
-  // Formun submit edildiğinde çalışacak fonksiyon
-  const handleFormSubmit = (data) => {
-    if (onSubmit) onSubmit(data);
-  };
+    const handleFormReset = () => {
+      reset();
+      if (typeof onReset === "function") {
+        onReset();
+      }
+    };
 
-  // Formun resetlendiğinde çalışacak fonksiyon
-  const handleFormReset = () => {
-    reset();
-    if (onReset) onReset();
-  };
+    return (
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
+        {React.Children.map(children, (child) => {
+          if (React.isValidElement(child) && child.props.name) {
+            const error = errors[child.props.name];
+            const isError = !!error;
 
-  return (
-    <form onSubmit={handleSubmit(handleFormSubmit)}>
-      {React.Children.map(children, (child) => {
-        if (
-          child.type === "input" ||
-          child.type === "select" ||
-          child.type === "textarea"
-        ) {
-          return (
-            <Controller
-              name={child.props.name}
-              control={control}
-              render={({ field }) => React.cloneElement(child, { ...field })}
-            />
-          );
-        }
-        return child;
-      })}
+            return (
+              <Controller
+                name={child.props.name}
+                control={control}
+                defaultValue={child.props.defaultValue || ""}
+                render={({ field }) =>
+                  React.cloneElement(child, {
+                    ...field,
+                    error: isError,
+                    helperText: isError ? error.message : "",
+                    sx: {
+                      ...child.props.sx,
+                      "& label": {
+                        color: isError ? "red" : "", // Hata durumunda label rengini kırmızı yapar
+                      },
+                    },
+                  })
+                }
+              />
+            );
+          }
+          return child;
+        })}
 
-      <Box
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          marginTop: "20px",
-        }}
-      >
-        <Button
-          buttontype="secondary"
-          onClick={handleFormReset}
-          sx={{ float: "right", marginTop: 5, marginRight: "10px" }}
+        <Box
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginTop: "20px",
+          }}
         >
-          Temizle
-        </Button>
-        <Button
-          buttontype="primary"
-          type="submit"
-          onClick={handleFormSubmit}
-          sx={{ float: "right", marginTop: 5, marginRight: "10px" }}
-        >
-          Kaydet
-        </Button>
-      </Box>
-    </form>
-  );
-};
+          {handleFormCancel && (
+            <Button
+              buttontype="secondary"
+              onClick={handleFormCancel}
+              sx={{ marginRight: "10px" }}
+            >
+              Vazgeç
+            </Button>
+          )}
+          {onReset && (
+            <Button
+              buttontype="primary"
+              type="button" // Button türünü 'button' yapıyoruz
+              onClick={handleFormReset}
+              sx={{ marginRight: "10px" }}
+            >
+              Temizle
+            </Button>
+          )}
+          {onSubmit && (
+            <Button buttontype="primary" type="submit">
+              Kaydet
+            </Button>
+          )}
+        </Box>
+      </form>
+    );
+  }
+);
 
 export default Form;

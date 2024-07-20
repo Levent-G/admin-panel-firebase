@@ -1,13 +1,34 @@
-import { Checkbox, TextField, } from "@gib-ui/core";
-import React from "react";
+import React, { useRef, useState } from "react";
+import { Checkbox, TextField } from "@gib-ui/core";
 import CustomPaper from "../../components/CustomPaper";
 import Form from "../../components/Form";
-
+import { schema } from "./shared/SayfaEkleFormSchema";
+import { Box, Button } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import BolumEkleDrawer from "./BolumEkleDrawer";
 
 const SayfaEkleForm = () => {
+  const formRef = useRef(null);
+  const [bolumList, setBolumList] = useState([]);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const handleFormSubmit = (data) => {
+    console.log("Form Submitted:", data);
+  };
+
+  const handleFormReset = () => {
+    setBolumList([]);
+    console.log("Form Reset");
+  };
+console.log(bolumList)
   return (
-    <CustomPaper title="Sayfa Ekle" >
-      <Form>
+    <CustomPaper title="Sayfa Ekle">
+      <Form
+        onSubmit={handleFormSubmit}
+        onReset={handleFormReset}
+        ref={formRef}
+        schema={schema}
+      >
         <TextField
           id="sayfaName"
           name="sayfaName"
@@ -19,10 +40,28 @@ const SayfaEkleForm = () => {
           xs={12}
           sx={{ marginBottom: 3 }}
         />
-        <Checkbox labeltext="1.bölüm" onChange={function noRefCheck() {}} />
-     
-      
+        <Button onClick={() => setDrawerOpen(true)} startIcon={<AddIcon />} sx={{color:"#093640"}}>
+          Bölüm Ekle
+        </Button>
+        <Box display="flex" flexWrap="wrap" gap={2} sx={{ marginTop: 2 }}>
+          {bolumList.map((item) => (
+            <Checkbox
+              key={item.id}
+              name={`bolum_${item.id}`}
+              labeltext={item.ad}
+              onChange={function noRefCheck() {}}
+              lg={4}
+              md={4}
+              xs={4}
+            />
+          ))}
+        </Box>
       </Form>
+      <BolumEkleDrawer
+        setBolumList={setBolumList}
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+      />
     </CustomPaper>
   );
 };
