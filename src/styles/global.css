@@ -1,0 +1,27 @@
+.App{
+    background-color: #F2F4F6;
+    display: flex;
+}
+/* sidebar bg */
+.MuiBox-root .css-1jwojna{
+    background: white;
+ 
+   
+}
+/* sidebar bg small */
+.MuiBox-root .css-pqs1n8{
+    background: white;
+
+}
+/* hr menu  */
+.MuiBox-root .css-1ienp00{
+    background: #093640;
+}
+/* menu ıtem   */
+.MuiBox-root .css-1ptjmwd{
+    color:black;
+}
+/* menu side icon  */
+.MuiBox-root .css-tlssps{
+    background-color:#093640 ;
+}
