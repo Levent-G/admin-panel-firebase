@@ -42,7 +42,7 @@ export const menuItems = [
       </svg>
     ),
     id: "2",
-    label: "Page2",
-    link: "/page2",
+    label: "Sayfaya Panel Oluştur",
+    link: "/sayfa-panel-ekle",
   },
 ];
