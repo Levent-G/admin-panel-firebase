@@ -1,0 +1,35 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import { DataGrid } from '@gib-ui/core';
+
+const ListComponent = ({ columns, staticData }) => {
+  return (
+    <div style={{ height: 400, width: '100%' }}>
+      <DataGrid
+        columns={columns}
+        rows={staticData}
+        pageSize={5}
+        rowsPerPageOptions={[5]}
+      />
+    </div>
+  );
+};
+
+// PropTypes ile tip denetimi ekleyelim
+ListComponent.propTypes = {
+  columns: PropTypes.arrayOf(
+    PropTypes.shape({
+      field: PropTypes.string.isRequired,
+      headerName: PropTypes.string.isRequired,
+      width: PropTypes.number,
+    })
+  ).isRequired,
+  staticData: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      // Diğer satır verilerini burada tanımlayabilirsiniz
+    })
+  ).isRequired,
+};
+
+export default ListComponent;

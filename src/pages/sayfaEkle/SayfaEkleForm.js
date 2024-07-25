@@ -6,21 +6,28 @@ import { schema } from "./shared/SayfaEkleFormSchema";
 import { Box, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import BolumEkleDrawer from "./BolumEkleDrawer";
+import { sayfaEkleService } from "../../api/services/sayfaEkle/sayfaEkleServices";
 
 const SayfaEkleForm = () => {
   const formRef = useRef(null);
   const [bolumList, setBolumList] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const handleFormSubmit = (data) => {
-    console.log("Form Submitted:", data);
+  const handleFormSubmit = async (data) => {
+    const user = "test";
+    const newData = { ...data, bolumList: [...bolumList], user };
+    try {
+      await sayfaEkleService(newData);
+      console.log("Form submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting form: ", error);
+    }
   };
 
   const handleFormReset = () => {
     setBolumList([]);
-    console.log("Form Reset");
   };
-console.log(bolumList)
+
   return (
     <CustomPaper title="Sayfa Ekle">
       <Form
@@ -40,7 +47,11 @@ console.log(bolumList)
           xs={12}
           sx={{ marginBottom: 3 }}
         />
-        <Button onClick={() => setDrawerOpen(true)} startIcon={<AddIcon />} sx={{color:"#093640"}}>
+        <Button
+          onClick={() => setDrawerOpen(true)}
+          startIcon={<AddIcon />}
+          sx={{ color: "#093640" }}
+        >
           Bölüm Ekle
         </Button>
         <Box display="flex" flexWrap="wrap" gap={2} sx={{ marginTop: 2 }}>

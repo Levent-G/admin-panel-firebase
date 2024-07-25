@@ -83,7 +83,7 @@ const Form = forwardRef(
           )}
           {onReset && (
             <Button
-              buttontype="primary"
+              buttontype="secondary"
               type="button" // Button türünü 'button' yapıyoruz
               onClick={handleFormReset}
               sx={{ marginRight: "10px" }}
