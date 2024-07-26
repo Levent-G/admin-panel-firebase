@@ -6,7 +6,7 @@ import { schema } from "./shared/SayfaEkleFormSchema";
 import { Box, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import BolumEkleDrawer from "./BolumEkleDrawer";
-import { sayfaEkleService } from "../../api/services/sayfaEkle/sayfaEkleServices";
+import { sayfaEkleService } from "../../api/services/sayfaServices/sayfaEkleServices";
 
 const SayfaEkleForm = () => {
   const formRef = useRef(null);
