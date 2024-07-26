@@ -33,32 +33,47 @@ export const columns = [
     width: 150,
   },
   {
+    field: "action",
+    headerName: "",
     align: "center",
-    editable: true,
-    field: "islemYap",
+    minWidth: 230,
     headerAlign: "center",
-    width: 150,
+    flex: 1,
+    sortable: false,
+
+
     renderCell: () => {
       return (
         <>
           <Menu
-          
             buttonText="İŞLEM YAP"
             id="1"
             items={[
               {
                 id: "1",
-                onClick:()=>{console.log("Düzenle işlem yap")},
+                onClick: () => {
+                  console.log("Düzenle işlem yap");
+                },
                 text: "Düzenle",
               },
               {
                 id: "2",
-                onClick:()=>{console.log("Sil işlem yap")},
+                onClick: () => {
+                  console.log("Sil işlem yap");
+                },
                 text: "Sil",
               },
-             
             ]}
-            width="300px"
+            buttonSx={{
+              height: "4vh",
+              borderRadius: "none",
+              marginLeft: "10px",
+              marginRight: "10px",
+            }}
+            iconSx={{ padding: "0 0.5rem", alignItems: "center" }}
+            menuSx={{ width: "150px" }}
+            width="150px"
+            disableScrollLock
           />
         </>
       );

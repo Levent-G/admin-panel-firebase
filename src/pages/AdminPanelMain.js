@@ -5,7 +5,7 @@ const AdminPanelMain = () => {
   
 
   return (
-    <Box ml={5} mt={5} sx={{ width: "100% !important" }}>
+    <Box  >
      sdkljflsdjfskdfd
 
     
