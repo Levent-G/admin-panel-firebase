@@ -27,7 +27,6 @@ const SayfaBilgileriDrawer = ({
     // Verileri güncelleyin
     if (bolumEkle) {
       const bolumData = {
-        bolumId: 1, // Bölüm ID'si (belirleyici olabilir)
         ad: data.bolum, // Bölüm adı
         // Diğer gerekli bölüm verileri
       };

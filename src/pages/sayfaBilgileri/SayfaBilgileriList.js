@@ -31,6 +31,10 @@ const SayfaBilgileriList = () => {
         const { page, bolumler } = await getSayfaWithBolumler(
           "B6DFm8z8GqCjG32lkXP6"
         );
+        const deneme = await getSayfaWithBolumler(
+          "B6DFm8z8GqCjG32lkXP6"
+        );
+        console.log("denemeeee",deneme)
         // staticData'yı uygun formatta güncelle
         const formattedData = bolumler.map((bolum) => ({
           id: bolum.id, // id veriniz
