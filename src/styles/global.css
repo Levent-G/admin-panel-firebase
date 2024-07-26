@@ -5,7 +5,8 @@
 /* sidebar bg */
 .MuiBox-root .css-1jwojna{
     background: white;
- 
+    width:310px !important;
+    height:150vh !important;
    
 }
 /* sidebar bg small */
@@ -24,6 +25,7 @@
 /* menu side icon  */
 .MuiBox-root .css-tlssps{
     background-color:#093640 ;
+    display: none;
 }
 /* crumbs title */
 .css-1weq8t6-MuiTypography-root{

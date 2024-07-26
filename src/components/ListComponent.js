@@ -1,17 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import CustomPaper from '../components/CustomPaper';
 import { DataGrid } from '@gib-ui/core';
 
-const ListComponent = ({ columns, staticData }) => {
+const ListComponent = ({ columns, staticData,title }) => {
   return (
-    <div style={{ height: 400, width: '100%' }}>
+    <CustomPaper title={title} sx={{padding:7}}>
       <DataGrid
         columns={columns}
         rows={staticData}
         pageSize={5}
         rowsPerPageOptions={[5]}
       />
-    </div>
+    </CustomPaper>
   );
 };
 

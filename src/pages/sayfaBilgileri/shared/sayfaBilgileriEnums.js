@@ -1,6 +1,7 @@
+import React from 'react';
 import { Menu } from "@gib-ui/core";
 
-export const columns = [
+export const getColumns = (handleEdit, handleDelete) => [
   {
     align: "center",
     field: "id",
@@ -35,14 +36,9 @@ export const columns = [
   {
     field: "action",
     headerName: "",
-    align: "center",
-    minWidth: 230,
-    headerAlign: "center",
-    flex: 1,
-    sortable: false,
-
-
-    renderCell: () => {
+    align: "left",
+    minWidth: 200,
+    renderCell: (params) => {
       return (
         <>
           <Menu
@@ -51,16 +47,12 @@ export const columns = [
             items={[
               {
                 id: "1",
-                onClick: () => {
-                  console.log("Düzenle işlem yap");
-                },
+                onClick: () => handleEdit(params.row),
                 text: "Düzenle",
               },
               {
                 id: "2",
-                onClick: () => {
-                  console.log("Sil işlem yap");
-                },
+                onClick: () => handleDelete(params.row),
                 text: "Sil",
               },
             ]}

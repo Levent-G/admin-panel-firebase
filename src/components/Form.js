@@ -3,9 +3,10 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button } from "@gib-ui/core";
 import { Box } from "@mui/material";
+import PropTypes from "prop-types";
 
 const Form = forwardRef(
-  ({ children, onSubmit, onReset, schema, handleFormCancel }, ref) => {
+  ({ children, onSubmit, onReset, schema, defaultValues, handleFormCancel, customReset }, ref) => {
     const {
       control,
       handleSubmit,
@@ -15,12 +16,19 @@ const Form = forwardRef(
       formState: { errors },
     } = useForm({
       resolver: yupResolver(schema),
+      defaultValues, 
     });
 
     useImperativeHandle(ref, () => ({
       resetForm: () => reset(),
       getValues: () => getValues(),
       setValue: (name, value) => setValue(name, value),
+      customReset: () => {
+        if (customReset) {
+          customReset();
+        }
+        reset(defaultValues);
+      },
     }));
 
     const handleFormSubmit = (data) => {
@@ -28,10 +36,10 @@ const Form = forwardRef(
     };
 
     const handleFormReset = () => {
-      reset();
       if (typeof onReset === "function") {
         onReset();
       }
+      reset(defaultValues); 
     };
 
     return (
@@ -54,7 +62,7 @@ const Form = forwardRef(
                     sx: {
                       ...child.props.sx,
                       "& label": {
-                        color: isError ? "red" : "", // Hata durumunda label rengini kırmızı yapar
+                        color: isError ? "red" : "", 
                       },
                     },
                   })
@@ -84,7 +92,7 @@ const Form = forwardRef(
           {onReset && (
             <Button
               buttontype="secondary"
-              type="button" // Button türünü 'button' yapıyoruz
+              type="button" 
               onClick={handleFormReset}
               sx={{ marginRight: "10px" }}
             >
@@ -101,5 +109,15 @@ const Form = forwardRef(
     );
   }
 );
+
+Form.propTypes = {
+  children: PropTypes.node,
+  onSubmit: PropTypes.func,
+  onReset: PropTypes.func,
+  schema: PropTypes.object.isRequired,
+  defaultValues: PropTypes.object,
+  handleFormCancel: PropTypes.func,
+  customReset: PropTypes.func, 
+};
 
 export default Form;
