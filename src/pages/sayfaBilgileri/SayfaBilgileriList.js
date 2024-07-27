@@ -15,13 +15,11 @@ const SayfaBilgileriList = () => {
   const [bolumEkle,setBolumEkle] = useState(false);
 
   const handleEdit = (row) => {
-    console.log(row, "edit");
     setDrawerOpen(true);
     setSelectedRow(row);
   };
   const handleDelete = (row) => {
-    console.log(row, "delete");
-    bolumSilService("B6DFm8z8GqCjG32lkXP6", "WN2mVvvS1pkb3gaxymYO");
+    bolumSilService(row.sayfaId, row.id);
   };
   const columns = getColumns(handleEdit, handleDelete);
 
@@ -31,16 +29,13 @@ const SayfaBilgileriList = () => {
         const { page, bolumler } = await getSayfaWithBolumler(
           "B6DFm8z8GqCjG32lkXP6"
         );
-        const deneme = await getSayfaWithBolumler(
-          "B6DFm8z8GqCjG32lkXP6"
-        );
-        console.log("denemeeee",deneme)
-        // staticData'yı uygun formatta güncelle
+     
         const formattedData = bolumler.map((bolum) => ({
-          id: bolum.id, // id veriniz
-          sayfaName: page.sayfaName, // Sayfa adınız
-          bolumler: bolum.ad, // Bölüm adınız
-          user: page.user, // Sayfa sahibi
+          id: bolum.id, 
+          sayfaName: page.sayfaName, 
+          sayfaId:page.id,
+          bolumler: bolum.ad, 
+          user: page.user, 
         }));
 
         setStaticData(formattedData);
@@ -59,14 +54,15 @@ const SayfaBilgileriList = () => {
 
   return (
     <>
+      <Button buttontype="primary" type="submit"sx={{float:"right",marginRight:2, marginTop:2}} onClick={()=>{setDrawerOpen(true);setBolumEkle(true);setSelectedRow({})}} >
+        Bölüm Ekle
+      </Button>
       <ListComponent
         columns={columns}
         staticData={staticData}
         title="Sayfa Bilgileri"
       />
-      <Button buttontype="primary" type="submit"sx={{float:"right",marginTop:2}} onClick={()=>{setDrawerOpen(true);setBolumEkle(true)}} >
-        Bölüm Ekle
-      </Button>
+    
       {drawerOpen && (
         <SayfaBilgileriDrawer
           drawerOpen={drawerOpen}

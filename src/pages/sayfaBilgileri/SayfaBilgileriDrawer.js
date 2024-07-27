@@ -13,35 +13,23 @@ const SayfaBilgileriDrawer = ({
   bolumEkle,
 }) => {
   const schema = schemaDrawer(bolumEkle);
+
   const handleSubmit = async (data) => {
     const { sayfaAdi, bolum } = data;
 
-    // Form verilerini konsola yazdırın
-    console.log("Submitted Data:", {
-      sayfaName: sayfaAdi,
-      bolumler: bolum,
-      user: selectedRow.user,
-    });
-    console.log("aaaaaaaaaa",data)
-
-    // Verileri güncelleyin
     if (bolumEkle) {
       const bolumData = {
-        ad: data.bolum, // Bölüm adı
-        // Diğer gerekli bölüm verileri
+        ad: data.bolum,
       };
-      await bolumEkleService( "B6DFm8z8GqCjG32lkXP6",
-        bolumData,
-        );
+      await bolumEkleService(selectedRow.sayfaId, bolumData);
     } else {
       await sayfaDuzenleService(
-        "B6DFm8z8GqCjG32lkXP6",
+        selectedRow.sayfaId,
         { sayfaName: sayfaAdi, bolumler: bolum, user: selectedRow.user },
-        "fzPMgDhST58hmVZSCqiF"
+        selectedRow.id
       );
     }
 
-    // Form verileri güncellendikten sonra yapılacak işlemler
     setDrawerOpen(false);
   };
 
