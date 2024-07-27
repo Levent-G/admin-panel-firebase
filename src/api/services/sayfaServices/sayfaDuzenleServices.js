@@ -16,12 +16,11 @@ export const sayfaDuzenleService = async (pageId, updatedData, bolumId) => {
       await updateDoc(bolumRef, { ad: updatedData.bolumler });
     }
     if (pagesDoc.exists()) {
-      console.log("dslkflsd");
       await updateDoc(pagesRef, { sayfaName: updatedData.sayfaName });
     } else {
       console.error("Document not found");
     }
   } catch (error) {
-    console.error("Error updating document: ", error.message); // Hata mesajını daha net görebilmek için
+    console.error("Error updating document: ", error.message); 
   }
 };

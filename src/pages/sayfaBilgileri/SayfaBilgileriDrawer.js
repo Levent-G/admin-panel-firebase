@@ -3,7 +3,7 @@ import { Alert, TextField } from "@gib-ui/core";
 import { Drawer, Typography, Box, Divider } from "@mui/material";
 import Form from "../../components/Form";
 import { schemaDrawer } from "./shared/sayfaBilgileriDuzenleSchema";
-import { sayfaDuzenleService } from "../../api/services/sayfaServices/sayfaDuzenleServices"; // updatePageService'i import et
+import { sayfaDuzenleService } from "../../api/services/sayfaServices/sayfaDuzenleServices";
 import { bolumEkleService } from "../../api/services/bolumServices/bolumEkleService";
 
 const SayfaBilgileriDrawer = ({
@@ -11,25 +11,25 @@ const SayfaBilgileriDrawer = ({
   drawerOpen,
   setDrawerOpen,
   bolumEkle,
+  onComplete,
 }) => {
   const schema = schemaDrawer(bolumEkle);
+  const pageToken = localStorage.getItem("pageToken");
 
   const handleSubmit = async (data) => {
     const { sayfaAdi, bolum } = data;
 
     if (bolumEkle) {
-      const bolumData = {
-        ad: data.bolum,
-      };
-      await bolumEkleService(selectedRow.sayfaId, bolumData);
+      const bolumData = { ad: bolum };
+      await bolumEkleService(pageToken, bolumData);
     } else {
-      await sayfaDuzenleService(
-        selectedRow.sayfaId,
-        { sayfaName: sayfaAdi, bolumler: bolum, user: selectedRow.user },
-        selectedRow.id
-      );
+      await sayfaDuzenleService(selectedRow.sayfaId, {
+        sayfaName: sayfaAdi,
+        bolumler: bolum,
+        user: selectedRow.user,
+      }, selectedRow.id);
     }
-
+    onComplete();
     setDrawerOpen(false);
   };
 
@@ -55,12 +55,11 @@ const SayfaBilgileriDrawer = ({
         <Alert
           alertText="lorem lorem lorem lorem isloremim lorem lorem."
           id="alertWithTitle"
-          severity={"info"}
+          severity="info"
         />
         <Form
           onSubmit={handleSubmit}
           schema={schema}
-          onReset
           defaultValues={{
             sayfaAdi: selectedRow?.sayfaName || "",
             bolum: selectedRow?.bolumler || [],
@@ -70,11 +69,7 @@ const SayfaBilgileriDrawer = ({
           <Typography
             variant="h5"
             gutterBottom
-            sx={{
-              color: "#093640",
-              width: "100%",
-              marginTop: 4,
-            }}
+            sx={{ color: "#093640", marginTop: 4 }}
           >
             Sayfa Bilgileri Düzenle
           </Typography>
@@ -83,25 +78,16 @@ const SayfaBilgileriDrawer = ({
             <TextField
               id="sayfaAdi"
               name="sayfaAdi"
-              key="sayfaAdi"
               labeltext="Sayfa Adı"
               fullWidth
-              lg={12}
-              md={12}
-              xs={12}
               sx={{ marginBottom: 3 }}
             />
           )}
-
           <TextField
             id="bolum"
             name="bolum"
-            key="bolum"
             labeltext="Bölüm"
             fullWidth
-            lg={12}
-            md={12}
-            xs={12}
             sx={{ marginBottom: 3 }}
           />
         </Form>

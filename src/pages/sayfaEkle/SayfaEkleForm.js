@@ -19,6 +19,7 @@ const SayfaEkleForm = () => {
     try {
       await sayfaEkleService(newData);
       console.log("Form submitted successfully!");
+      window.location.reload(); 
     } catch (error) {
       console.error("Error submitting form: ", error);
     }
