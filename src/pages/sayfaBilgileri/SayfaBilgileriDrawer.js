@@ -6,29 +6,32 @@ import { schemaDrawer } from "./shared/sayfaBilgileriDuzenleSchema";
 import { sayfaDuzenleService } from "../../api/services/sayfaServices/sayfaDuzenleServices";
 import { bolumEkleService } from "../../api/services/bolumServices/bolumEkleService";
 
-
 const SayfaBilgileriDrawer = ({
   selectedRow,
   drawerOpen,
   setDrawerOpen,
-  bolumEkle,
   onComplete,
 }) => {
-  const schema = schemaDrawer(bolumEkle);
-  const pageToken = localStorage.getItem("pageToken");
+  const isBolumEkle = Object.keys(selectedRow).length === 0;
 
+  const schema = schemaDrawer(isBolumEkle);
+  const pageToken = localStorage.getItem("pageToken");
   const handleSubmit = async (data) => {
     const { sayfaAdi, bolum } = data;
 
-    if (bolumEkle) {
+    if (isBolumEkle) {
       const bolumData = { ad: bolum };
       await bolumEkleService(pageToken, bolumData);
     } else {
-      await sayfaDuzenleService(selectedRow.sayfaId, {
-        sayfaName: sayfaAdi,
-        bolumler: bolum,
-        user: selectedRow.user,
-      }, selectedRow.id);
+      await sayfaDuzenleService(
+        selectedRow.sayfaId,
+        {
+          sayfaName: sayfaAdi,
+          bolumler: bolum,
+          user: selectedRow.user,
+        },
+        selectedRow.id
+      );
     }
     onComplete();
     setDrawerOpen(false);
@@ -75,7 +78,7 @@ const SayfaBilgileriDrawer = ({
             Sayfa Bilgileri Düzenle
           </Typography>
           <Divider sx={{ marginBottom: 3 }} />
-          {!bolumEkle && (
+          {!isBolumEkle && (
             <TextField
               id="sayfaAdi"
               name="sayfaAdi"

@@ -7,18 +7,15 @@ import { bolumSilService } from "../../api/services/bolumServices/bolumSilServic
 import { Button } from "@gib-ui/core";
 
 const SayfaBilgileriList = () => {
-  const [error, setError] = useState(null);
   const [staticData, setStaticData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
-  const [bolumEkle, setBolumEkle] = useState(false);
   const pageToken = localStorage.getItem("pageToken");
 
   const handleEdit = (row) => {
     setDrawerOpen(true);
     setSelectedRow(row);
-    setBolumEkle(false);
   };
 
   const handleDelete = async (row) => {
@@ -32,7 +29,7 @@ const SayfaBilgileriList = () => {
     setLoading(true);
     try {
       const { page, bolumler } = await getSayfaWithBolumler(pageToken);
-      const formattedData = bolumler.map((bolum,index) => ({
+      const formattedData = bolumler.map((bolum, index) => ({
         id: index,
         sayfaName: page.sayfaName,
         sayfaId: page.id,
@@ -41,7 +38,7 @@ const SayfaBilgileriList = () => {
       }));
       setStaticData(formattedData);
     } catch (error) {
-      setError("Error fetching data: " + error.message);
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -52,7 +49,6 @@ const SayfaBilgileriList = () => {
   }, [fetchData]);
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
 
   return (
     <>
@@ -61,19 +57,21 @@ const SayfaBilgileriList = () => {
         sx={{ float: "right", marginRight: 2, marginTop: 2 }}
         onClick={() => {
           setDrawerOpen(true);
-          setBolumEkle(true);
           setSelectedRow({});
         }}
       >
         Bölüm Ekle
       </Button>
-      <ListComponent columns={columns} staticData={staticData} title="Sayfa Bilgileri" />
+      <ListComponent
+        columns={columns}
+        staticData={staticData}
+        title="Sayfa Bilgileri"
+      />
       <SayfaBilgileriDrawer
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         selectedRow={selectedRow}
         setSelectedRow={setSelectedRow}
-        bolumEkle={bolumEkle}
         onComplete={fetchData}
       />
     </>
