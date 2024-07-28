@@ -32,8 +32,8 @@ const SayfaBilgileriList = () => {
     setLoading(true);
     try {
       const { page, bolumler } = await getSayfaWithBolumler(pageToken);
-      const formattedData = bolumler.map((bolum) => ({
-        id: bolum.id,
+      const formattedData = bolumler.map((bolum,index) => ({
+        id: index,
         sayfaName: page.sayfaName,
         sayfaId: page.id,
         bolumler: bolum.ad,

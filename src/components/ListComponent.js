@@ -16,7 +16,6 @@ const ListComponent = ({ columns, staticData,title }) => {
   );
 };
 
-// PropTypes ile tip denetimi ekleyelim
 ListComponent.propTypes = {
   columns: PropTypes.arrayOf(
     PropTypes.shape({
@@ -28,7 +27,6 @@ ListComponent.propTypes = {
   staticData: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
-      // Diğer satır verilerini burada tanımlayabilirsiniz
     })
   ).isRequired,
 };

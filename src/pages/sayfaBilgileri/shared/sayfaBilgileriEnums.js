@@ -6,7 +6,7 @@ export const getColumns = (handleEdit, handleDelete) => [
     align: "center",
     field: "id",
     headerAlign: "center",
-    headerName: "ID",
+    headerName: "Sıra No",
     width: 100,
   },
   {
