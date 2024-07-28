@@ -7,18 +7,20 @@ import { Box, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import BolumEkleDrawer from "./BolumEkleDrawer";
 import { sayfaEkleService } from "../../api/services/sayfaServices/sayfaEkleServices";
+import { useNavigate } from "react-router-dom";
 
 const SayfaEkleForm = () => {
   const formRef = useRef(null);
   const [bolumList, setBolumList] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const navigate = useNavigate()
 
   const handleFormSubmit = async (data) => {
     const user = "test";
     const newData = { ...data, bolumList: [...bolumList], user };
     try {
       await sayfaEkleService(newData);
-      console.log("Form submitted successfully!");
+      navigate("/sayfa-bilgileri")
       window.location.reload(); 
     } catch (error) {
       console.error("Error submitting form: ", error);

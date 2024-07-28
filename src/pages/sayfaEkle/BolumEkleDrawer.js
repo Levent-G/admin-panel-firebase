@@ -9,13 +9,12 @@ const BolumEkleDrawer = ({ setBolumList, drawerOpen, setDrawerOpen }) => {
     const { bolumAdi } = data;
     setBolumList((prevList) => {
       const newBolum = {
-        id: prevList.length ? Math.max(...prevList.map((b) => b.id)) + 1 : 1,
         ad: bolumAdi,
       };
       const updatedList = [...prevList, newBolum];
       return updatedList;
     });
-    setDrawerOpen(false); // Close drawer
+    setDrawerOpen(false); 
   };
 
   return (

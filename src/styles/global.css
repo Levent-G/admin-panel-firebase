@@ -1,11 +1,12 @@
 .App{
     background-color: #F2F4F6;
     display: flex;
+
 }
 /* sidebar bg */
 .MuiBox-root .css-1jwojna{
     background: white;
-    width:310px !important;
+    width:210px !important;
     height:150vh !important;
    
 }
