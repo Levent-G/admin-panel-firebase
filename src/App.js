@@ -5,6 +5,7 @@ import SayfaEkleMain from "./pages/sayfaEkle/SayfaEkleMain";
 import SayfaBilgileriMain from "./pages/sayfaBilgileri/SayfaBilgileriMain";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';  // Toast stil dosyasını import etmeyi unutmayın
+import BolumIcerikEkleMain from "./pages/bolumIcerikEkle/BolumIcerikEkleMain";
 
 function App() {
   return (
@@ -30,6 +31,10 @@ function App() {
           <Route
             path="/sayfa-bilgileri"
             element={<SayfaBilgileriMain />}
+          />
+             <Route
+            path="/bolum-icerik-sorgula"
+            element={<BolumIcerikEkleMain />}
           />
         </Routes>
       </BrowserRouter>

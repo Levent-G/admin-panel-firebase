@@ -6,13 +6,14 @@ import { Box } from "@mui/material";
 import PropTypes from "prop-types";
 
 const Form = forwardRef(
-  ({ children, onSubmit, onReset, schema, defaultValues, handleFormCancel, customReset }, ref) => {
+  ({ children, onSubmit, onReset, schema, defaultValues, handleFormCancel, customReset, submitButtonText = "Kaydet"  }, ref) => {
     const {
       control,
       handleSubmit,
       reset,
       getValues,
       setValue,
+  
       formState: { errors },
     } = useForm({
       resolver: yupResolver(schema),
@@ -101,7 +102,7 @@ const Form = forwardRef(
           )}
           {onSubmit && (
             <Button buttontype="primary" type="submit">
-              Kaydet
+              {submitButtonText}
             </Button>
           )}
         </Box>
