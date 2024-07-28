@@ -1,5 +1,6 @@
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import { notify } from "../../../utils/ToastifyEnums";
 
 export const bolumEkleService = async (pageId, bolumData) => {
   try {
@@ -7,8 +8,9 @@ export const bolumEkleService = async (pageId, bolumData) => {
 
     await addDoc(bolumlerRef, bolumData);
 
-    console.log("Bölüm başarıyla eklendi!");
+    notify("Bölüm başarıyla eklendi!", "success");
+
   } catch (error) {
-    console.error("Bölüm eklenirken bir hata oluştu: ", error.message); 
+    notify("Bölüm eklenirken bir hata oluştu!", "error");
   }
 };

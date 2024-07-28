@@ -3,18 +3,15 @@ import { db } from "../firebase";
 
 export const getSayfaWithBolumler = async (sayfaId) => {
   try {
-    // Sayfa bilgilerini almak için
     const pageDocRef = doc(db, 'pages', sayfaId);
     const pageSnapshot = await getDoc(pageDocRef);
 
     if (!pageSnapshot.exists()) {
-      console.log("No matching document.");
-      return { page: null, bolumler: [] }; // Boş veri döndür
+      return { page: null, bolumler: [] }; 
     }
 
     const pageData = { id: pageSnapshot.id, ...pageSnapshot.data() };
 
-    // Bölümleri almak için
     const bolumlerRef = collection(db, 'pages', sayfaId, 'bolumler');
     const bolumlerSnapshot = await getDocs(bolumlerRef);
 
@@ -23,6 +20,6 @@ export const getSayfaWithBolumler = async (sayfaId) => {
     return { page: pageData, bolumler };
   } catch (error) {
     console.error("Error getting documents: ", error.message);
-    return { page: null, bolumler: [] }; // Hata durumunda boş veri döndür
+    return { page: null, bolumler: [] }; 
   }
 };

@@ -6,6 +6,7 @@ import { schemaDrawer } from "./shared/sayfaBilgileriDuzenleSchema";
 import { sayfaDuzenleService } from "../../api/services/sayfaServices/sayfaDuzenleServices";
 import { bolumEkleService } from "../../api/services/bolumServices/bolumEkleService";
 
+
 const SayfaBilgileriDrawer = ({
   selectedRow,
   drawerOpen,
