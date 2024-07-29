@@ -3,6 +3,7 @@ import { db } from "../firebase";
 import { notify } from "../../../utils/ToastifyEnums";
 
 export const bolumSorgula = async (pageId, bolumAdi) => {
+  console.log(bolumAdi)
   try {
     const bolumlerRef = collection(db, 'pages', pageId, 'bolumler');
   

@@ -1,34 +1,26 @@
 import React, { forwardRef, useImperativeHandle } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, FormProvider, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button } from "@gib-ui/core";
 import { Box } from "@mui/material";
 import PropTypes from "prop-types";
 
 const Form = forwardRef(
-  ({ children, onSubmit, onReset, schema, defaultValues, handleFormCancel, customReset, submitButtonText = "Kaydet"  }, ref) => {
-    const {
-      control,
-      handleSubmit,
-      reset,
-      getValues,
-      setValue,
-  
-      formState: { errors },
-    } = useForm({
+  ({ children, onSubmit, onReset, schema, defaultValues, handleFormCancel, customReset, submitButtonText = "Kaydet" }, ref) => {
+    const methods = useForm({
       resolver: yupResolver(schema),
       defaultValues, 
     });
 
     useImperativeHandle(ref, () => ({
-      resetForm: () => reset(),
-      getValues: () => getValues(),
-      setValue: (name, value) => setValue(name, value),
+      resetForm: () => methods.reset(),
+      getValues: () => methods.getValues(),
+      setValue: (name, value) => methods.setValue(name, value),
       customReset: () => {
         if (customReset) {
           customReset();
         }
-        reset(defaultValues);
+        methods.reset(defaultValues);
       },
     }));
 
@@ -40,73 +32,75 @@ const Form = forwardRef(
       if (typeof onReset === "function") {
         onReset();
       }
-      reset(defaultValues); 
+      methods.reset(defaultValues); 
     };
 
     return (
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
-        {React.Children.map(children, (child) => {
-          if (React.isValidElement(child) && child.props.name) {
-            const error = errors[child.props.name];
-            const isError = !!error;
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(handleFormSubmit)}>
+          {React.Children.map(children, (child) => {
+            if (React.isValidElement(child) && child.props.name) {
+              const error = methods.formState.errors[child.props.name];
+              const isError = !!error;
 
-            return (
-              <Controller
-                name={child.props.name}
-                control={control}
-                defaultValue={child.props.defaultValue || ""}
-                render={({ field }) =>
-                  React.cloneElement(child, {
-                    ...field,
-                    error: isError,
-                    helperText: isError ? error.message : "",
-                    sx: {
-                      ...child.props.sx,
-                      "& label": {
-                        color: isError ? "red" : "", 
+              return (
+                <Controller
+                  name={child.props.name}
+                  control={methods.control}
+                  defaultValue={child.props.defaultValue || ""}
+                  render={({ field }) =>
+                    React.cloneElement(child, {
+                      ...field,
+                      error: isError,
+                      helperText: isError ? error.message : "",
+                      sx: {
+                        ...child.props.sx,
+                        "& label": {
+                          color: isError ? "red" : "", 
+                        },
                       },
-                    },
-                  })
-                }
-              />
-            );
-          }
-          return child;
-        })}
+                    })
+                  }
+                />
+              );
+            }
+            return child;
+          })}
 
-        <Box
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: "20px",
-          }}
-        >
-          {handleFormCancel && (
-            <Button
-              buttontype="secondary"
-              onClick={handleFormCancel}
-              sx={{ marginRight: "10px" }}
-            >
-              Vazgeç
-            </Button>
-          )}
-          {onReset && (
-            <Button
-              buttontype="secondary"
-              type="button" 
-              onClick={handleFormReset}
-              sx={{ marginRight: "10px" }}
-            >
-              Temizle
-            </Button>
-          )}
-          {onSubmit && (
-            <Button buttontype="primary" type="submit">
-              {submitButtonText}
-            </Button>
-          )}
-        </Box>
-      </form>
+          <Box
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "20px",
+            }}
+          >
+            {handleFormCancel && (
+              <Button
+                buttontype="secondary"
+                onClick={handleFormCancel}
+                sx={{ marginRight: "10px" }}
+              >
+                Vazgeç
+              </Button>
+            )}
+            {onReset && (
+              <Button
+                buttontype="secondary"
+                type="button" 
+                onClick={handleFormReset}
+                sx={{ marginRight: "10px" }}
+              >
+                Temizle
+              </Button>
+            )}
+            {onSubmit && (
+              <Button buttontype="primary" type="submit">
+                {submitButtonText}
+              </Button>
+            )}
+          </Box>
+        </form>
+      </FormProvider>
     );
   }
 );
