@@ -1,9 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
-import { Box, Button, Typography } from "@mui/material";
-import { useFormContext, useWatch } from "react-hook-form";
-import * as yup from "yup";
+import { Button } from "@mui/material";
 
 import { db } from "../../services/firebase";
 import { notify } from "../../utils/notify";
@@ -11,54 +9,8 @@ import Page from "../../components/page/Page";
 import Form from "../../components/form/Form";
 import { InputField } from "../../components/form/formInputs/InputField";
 import YeniAlanDialog from "./YeniAlanDialog";
-
-function ListInputField({ name, values }) {
-  const { control } = useFormContext();
-  const watchedValues = useWatch({ control, name }) || values || [];
-
-  return (
-    <Box style={{ marginBottom: 16 }}>
-      <Typography style={{ fontWeight: "bold", display: "block", marginBottom: 8,marginTop:18,textTransform:"uppercase" }}>
-        {name}
-      </Typography>
-      {watchedValues.map((item, idx) => {
-        const titleKey = `${name}[${idx}].title`;
-        const valueKey = `${name}[${idx}].value`;
-        return (
-          <Box
-          key={idx}
-          sx={{
-            display: "flex",
-            gap: 2, // 16px
-            mb: 1,
-            alignItems: "center",
-          }}
-        >
-          <Box sx={{ flex: 1 }}>
-            <InputField
-              name={titleKey}
-              label="Başlık"
-              placeholder={item.title}
-              defaultValue={item.title}
-              fullWidth
-            />
-          </Box>
-        
-          <Box sx={{ flex: 1 }}>
-            <InputField
-              name={valueKey}
-              label="Değer"
-              placeholder={item.value}
-              defaultValue={item.value}
-              fullWidth
-            />
-          </Box>
-        </Box>
-        );
-      })}
-    </Box>
-  );
-}
+import { alanIcerigiSchema } from "./shared/alanIcerigiSchema";
+import { ListInputField } from "./components/ListInputField";
 
 export default function AlanIcerigi() {
   const { pageName, fieldName } = useParams();
@@ -78,12 +30,10 @@ export default function AlanIcerigi() {
         if (snap.exists()) {
           const data = snap.data();
 
-          // Sadece createdAt ve updatedAt dışındaki alanları al
           const contentFields = Object.keys(data).filter(
             (key) => !["createdAt", "updatedAt"].includes(key)
           );
 
-          // fields objesini oluştur
           const newFields = {};
           contentFields.forEach((key) => {
             newFields[key] = data[key];
@@ -99,23 +49,6 @@ export default function AlanIcerigi() {
     };
     loadContent();
   }, [pageName, fieldName]);
-
-  // Yup schema dinamik olarak oluşturuluyor
-  const schema = useMemo(() => {
-    return yup.object(
-      Object.entries(fields).reduce((acc, [key, val]) => {
-        acc[key] = Array.isArray(val)
-          ? yup.array().of(
-              yup.object({
-                title: yup.string().required("Başlık zorunlu"),
-                value: yup.string().required("Değer zorunlu"),
-              })
-            )
-          : yup.string().nullable();
-        return acc;
-      }, {})
-    );
-  }, [fields]);
 
   const handleSave = async (formData) => {
     try {
@@ -152,7 +85,7 @@ export default function AlanIcerigi() {
 
       <Form
         ref={fieldsFormref}
-        schema={schema}
+        schema={alanIcerigiSchema(fields)}
         onSubmit={handleSave}
         submitText="Kaydet"
         defaultValues={fields}
@@ -163,7 +96,6 @@ export default function AlanIcerigi() {
               key={fieldKey}
               name={fieldKey}
               values={fieldValue}
-              
             />
           ) : (
             <InputField

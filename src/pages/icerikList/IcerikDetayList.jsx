@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 import DuzenleModal from "./DuzenleModal";
 
 const IcerikDetayList = ({ fields, setFields, selectedFieldId, pageName }) => {
-  // Modal state: hangi alan (key) düzenleniyor, ve yeni değer
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editKey, setEditKey] = useState("");
   const [editValue, setEditValue] = useState("");
@@ -22,7 +21,6 @@ const IcerikDetayList = ({ fields, setFields, selectedFieldId, pageName }) => {
 
   const selectedField = fields.find((f) => f.id === selectedFieldId);
 
-  // Düzenle butonuna basılınca modal açılır, sadece ilgili key'nin değerini set et
   const handleOpenEditModal = (key) => {
     if (!selectedField) return;
 
@@ -68,7 +66,7 @@ const IcerikDetayList = ({ fields, setFields, selectedFieldId, pageName }) => {
                       "& > td": {
                         paddingTop: 1.5,
                         paddingBottom: 1.5,
-                        borderBottom: "1px solid #e0e0e0", // daha yumuşak bir alt çizgi
+                        borderBottom: "1px solid #e0e0e0", 
                       },
                     }}
                   >

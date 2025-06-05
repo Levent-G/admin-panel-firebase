@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../services/firebase";
-import Page from "../components/page/Page";
-import CustomDataGrid from "../components/dataGrid/CustomDataGrid";
+import { db } from "../../services/firebase";
+import Page from "../../components/page/Page";
+import CustomDataGrid from "../../components/dataGrid/CustomDataGrid";
+import { columns } from "./shared/userEnums";
 
 function Users() {
   const [rows, setRows] = useState([]);
@@ -16,12 +17,6 @@ function Users() {
     };
     fetchData();
   }, []);
-
-const columns = [
-  { headerName: "ID", field: "id" },
-  { headerName: "Name", field: "name" },
-  { headerName: "Email", field: "email" },
-];
 
   return (
     <Page

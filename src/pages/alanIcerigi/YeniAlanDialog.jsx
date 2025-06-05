@@ -2,21 +2,15 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  Button,
   Checkbox,
   FormControlLabel,
-  Box,
 } from "@mui/material";
 import { useRef, useState } from "react";
-import { useFormContext, useFieldArray } from "react-hook-form";
-import * as yup from "yup";
 import { notify } from "../../utils/notify";
 import Form from "../../components/form/Form";
 import { InputField } from "../../components/form/formInputs/InputField";
-
-const schema = yup.object().shape({
-  fieldName: yup.string().required("Alan adı boş olamaz"),
-});
+import ListItemsForm from "./components/ListItemsForm";
+import { schema } from "./shared/yeniAlanDialogSchema";
 
 export default function YeniAlanDialog({
   open,
@@ -44,7 +38,6 @@ export default function YeniAlanDialog({
     }
 
     if (isList) {
-      // items'i temizle boş başlık ve değerleri at
       const validItems = data.items?.filter(
         (i) => i.title.trim() !== "" && i.value.trim() !== ""
       );
@@ -73,7 +66,7 @@ export default function YeniAlanDialog({
         }}
         onSubmit={handleAdd}
         submitText="Ekle"
-        sx={{p:1}}
+        sx={{ p: 1 }}
       >
         <DialogContent>
           <InputField
@@ -96,46 +89,7 @@ export default function YeniAlanDialog({
 
           {isList && <ListItemsForm />}
         </DialogContent>
-     
       </Form>
     </Dialog>
-  );
-}
-
-function ListItemsForm() {
-  const { control } = useFormContext();
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "items",
-  });
-
-  return (
-    <Box mt={2}>
-      {fields.map((item, idx) => (
-        <Box key={item.id} display="flex" gap={2} mb={2} alignItems="center">
-          <InputField
-            label={`Başlık ${item.title || idx + 1}`}
-            name={`items[${idx}].title`}
-            placeholder="Başlık"
-            fullWidth
-          />
-          <InputField
-            label={`Değer ${item.value || idx + 1}`}
-            name={`items[${idx}].value`}
-            placeholder="Değer"
-            fullWidth
-          />
-          <Button color="error" onClick={() => remove(idx)}>
-            Sil
-          </Button>
-        </Box>
-      ))}
-      <Button
-        variant="outlined"
-        onClick={() => append({ title: "", value: "" })}
-      >
-        Yeni Satır Ekle
-      </Button>
-    </Box>
   );
 }

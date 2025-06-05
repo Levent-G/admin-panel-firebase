@@ -76,7 +76,6 @@ const IcerikList = () => {
       );
       await deleteDoc(fieldDocRef);
 
-      // Listeyi yenile
       const fieldsCollectionRef = collection(
         db,
         "pages",
@@ -118,10 +117,9 @@ const IcerikList = () => {
                     alignItems: "flex-start",
                     gap: 2,
                     m: 1,
-                    backgroundColor:selectedFieldId === field.id? "rgba(0, 0, 0, 0.05)" : "transparent", // Seçili alan için arka plan rengi
+                    backgroundColor:selectedFieldId === field.id? "rgba(0, 0, 0, 0.05)" : "transparent", 
                   }}
                 >
-                  {/* Alan Bilgisi */}
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <Typography
                       fontWeight="bold"

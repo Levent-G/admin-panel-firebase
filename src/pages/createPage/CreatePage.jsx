@@ -1,11 +1,11 @@
 import React, { useRef } from "react";
 import * as yup from "yup";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "../services/firebase";
-import Page from "../components/page/Page";
-import Form from "../components/form/Form";
-import { InputField } from "../components/form/formInputs/InputField";
-import { notify } from "../utils/notify";
+import { db } from "../../services/firebase";
+import Page from "../../components/page/Page";
+import Form from "../../components/form/Form";
+import { InputField } from "../../components/form/formInputs/InputField";
+import { notify } from "../../utils/notify";
 import { useNavigate } from "react-router-dom";
 
 const schema = yup.object({
@@ -26,7 +26,6 @@ export default function CreatePage() {
   const onSubmit = async (data) => {
     const { reset } = formRef.current;
 
-    // Doküman ID olarak title'ı küçük harfe alıp boşlukları tire yapabilirsin:
     const pageId = data.title.trim().toLowerCase().replace(/\s+/g, "-");
 
     try {
