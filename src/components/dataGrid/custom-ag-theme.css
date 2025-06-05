@@ -1,0 +1,15 @@
+/* custom-ag-theme.css */
+.ag-theme-alpine {
+    --ag-background-color: #ffffff;
+    --ag-foreground-color: #111827;
+    --ag-border-color: #e5e7eb;
+    --ag-header-background-color: #f9fafb;
+    --ag-header-foreground-color: #111827;
+    --ag-row-hover-color: #eef2ff;
+    --ag-selected-row-background-color: #6366f1;
+    --ag-selected-row-foreground-color: #ffffff;
+    --ag-font-family: 'Inter', sans-serif;
+    --ag-font-size: 14px;
+    --ag-row-border-color: #e5e7eb;
+  }
+  
