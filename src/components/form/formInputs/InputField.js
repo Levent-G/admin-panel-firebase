@@ -2,7 +2,7 @@ import { TextField} from "@mui/material";
 import { Controller, useFormContext } from "react-hook-form";
 import Base from "../base/Base";
 
-export function InputField({ name, label, multiline = true, rows, ...props }) {
+export function InputField({ name, label, multiline = true, rows, disabled,...props }) {
   const {
     control,
     formState: { errors },
@@ -20,6 +20,7 @@ export function InputField({ name, label, multiline = true, rows, ...props }) {
             margin="normal"
             multiline={multiline}
             rows={rows}
+            disabled={disabled}
             error={!!errors[name]}
             helperText={errors[name]?.message}
             sx={{

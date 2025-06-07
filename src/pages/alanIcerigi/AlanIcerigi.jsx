@@ -17,6 +17,7 @@ export default function AlanIcerigi() {
   const navigate = useNavigate();
 
   const [fields, setFields] = useState({});
+  const [defaultValues,setDefaultValues] = useState({})
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const fieldsFormref = useRef();
@@ -38,7 +39,7 @@ export default function AlanIcerigi() {
           contentFields.forEach((key) => {
             newFields[key] = data[key];
           });
-
+          setDefaultValues(newFields)
           setFields(newFields);
         } else {
           setFields({});
@@ -88,7 +89,7 @@ export default function AlanIcerigi() {
         schema={alanIcerigiSchema(fields)}
         onSubmit={handleSave}
         submitText="Kaydet"
-        defaultValues={fields}
+        defaultValues={defaultValues}
       >
         {Object.entries(fields).map(([fieldKey, fieldValue]) =>
           Array.isArray(fieldValue) ? (

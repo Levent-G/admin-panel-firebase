@@ -29,7 +29,7 @@ const ListPage = () => {
     [navigate]
   );
 
-  const columns = listPageEnums(handleNavigate, navigate);
+  const columns = listPageEnums({handleNavigate, navigate});
   
   return (
     <Page
