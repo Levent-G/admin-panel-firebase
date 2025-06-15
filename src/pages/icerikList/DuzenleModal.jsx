@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Typography,
@@ -6,12 +7,13 @@ import {
   TextField,
   IconButton,
   Stack,
+  Switch,
+  FormControlLabel,
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../services/firebase";
 import { notify } from "../../utils/notify";
-import { useEffect, useState } from "react";
 
 const modalStyle = {
   position: "absolute",
@@ -37,61 +39,101 @@ const DuzenleModal = ({
   selectedField,
   pageName,
   setFields,
+  editContext, // { fieldName, blogIndex, key }
 }) => {
-  const [localArray, setLocalArray] = useState([]);
-  const [localString, setLocalString] = useState("");
+  const [localData, setLocalData] = useState(editValue);
+  const [useJsonEditor, setUseJsonEditor] = useState(false);
+  const [jsonEdit, setJsonEdit] = useState("");
 
-  const isArray = Array.isArray(editValue);
-
+  // Veri tipini güncelle
   useEffect(() => {
-    if (isArray) {
-      setLocalArray(editValue);
-    } else {
-      setLocalString(editValue || "");
-    }
-  }, [editValue, isArray]);
+    setLocalData(editValue);
+    setUseJsonEditor(
+      typeof editValue === "object" && editValue !== null ? true : false
+    );
+    setJsonEdit(
+      typeof editValue === "object" && editValue !== null
+        ? JSON.stringify(editValue, null, 2)
+        : ""
+    );
+  }, [editValue]);
 
+  // Kapatma işlemi
   const handleCloseEditModal = () => {
     setEditModalOpen(false);
     setEditKey("");
     setEditValue("");
-    setLocalArray([]);
-    setLocalString("");
+    setLocalData(null);
+    setUseJsonEditor(false);
+    setJsonEdit("");
   };
 
-  const handleItemChange = (index, field, value) => {
-    const updated = [...localArray];
-    updated[index][field] = value;
-    setLocalArray(updated);
+  // JSON textarea değişimi
+  const handleJsonChange = (value) => {
+    setJsonEdit(value);
+    try {
+      const parsed = JSON.parse(value);
+      setLocalData(parsed);
+    } catch {
+      // Parse hatası yoksa localData değiştirme
+    }
   };
 
-  const handleAddItem = () => {
-    setLocalArray([...localArray, { title: "", value: "" }]);
+  // Array ise item değişimi (yalnızca useJsonEditor false ise gösterilir)
+  const handleArrayItemChange = (index, field, value) => {
+    const updated = [...localData];
+    updated[index] = { ...updated[index], [field]: value };
+    setLocalData(updated);
   };
 
-  const handleDeleteItem = (index) => {
-    const updated = [...localArray];
-    updated.splice(index, 1);
-    setLocalArray(updated);
+  // Array item ekle
+  const handleAddArrayItem = () => {
+    if (Array.isArray(localData)) {
+      setLocalData([...localData, { title: "", value: "" }]);
+    }
+  };
+
+  // Array item sil
+  const handleDeleteArrayItem = (index) => {
+    if (Array.isArray(localData)) {
+      const updated = [...localData];
+      updated.splice(index, 1);
+      setLocalData(updated);
+    }
   };
 
   const handleSave = async () => {
     if (!selectedField || !editKey) return;
-
+  
     try {
-      const fieldDocRef = doc(
-        db,
-        "pages",
-        pageName,
-        "fields",
-        selectedField.id
-      );
-
-      await updateDoc(fieldDocRef, {
-        [editKey]: isArray ? localArray : localString,
-        updatedAt: new Date(),
-      });
-
+      const fieldDocRef = doc(db, "pages", pageName, "fields", selectedField.id);
+  
+      let updatedData = {};
+  
+      if (editContext?.fieldName && Array.isArray(selectedField[editContext.fieldName])) {
+        // İç içe dizi güncellemesi (örneğin bloglar)
+        const updatedArray = [...selectedField[editContext.fieldName]];
+        // editContext.blogIndex: güncellenen elemanın indexi
+        updatedArray[editContext.blogIndex] = {
+          ...updatedArray[editContext.blogIndex],
+          [editKey]: localData,
+        };
+  
+        updatedData = {
+          [editContext.fieldName]: updatedArray,
+          updatedAt: new Date(),
+        };
+      } else {
+        // Normal alan güncellemesi
+        updatedData = {
+          [editKey]: localData,
+          updatedAt: new Date(),
+        };
+      }
+  
+      await updateDoc(fieldDocRef, updatedData);
+  
+      // Fields'leri tekrar çek ve state güncelle
       const fieldsSnapshot = await getDocs(
         collection(db, "pages", pageName, "fields")
       );
@@ -100,11 +142,126 @@ const DuzenleModal = ({
         ...doc.data(),
       }));
       setFields(fieldsData);
+  
       notify("Güncelleme işlemi başarılı.", "success");
-
       handleCloseEditModal();
     } catch (error) {
       notify("Güncelleme sırasında hata oluştu.", "error");
+    }
+  };
+
+  // Render alanı
+  const renderContent = () => {
+    if (useJsonEditor) {
+      return (
+        <>
+          <TextField
+            label="JSON Düzenleyici"
+            multiline
+            minRows={8}
+            fullWidth
+            value={jsonEdit}
+            onChange={(e) => handleJsonChange(e.target.value)}
+            sx={{ fontFamily: "monospace", mb: 2 }}
+          />
+          {/* Eğer array ise ve JSON editor kapatılabilir */}
+          {Array.isArray(localData) && (
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={useJsonEditor}
+                  onChange={() => setUseJsonEditor(false)}
+                  color="primary"
+                />
+              }
+              label="Array Düzenleyici'ye geç"
+              sx={{ mb: 2 }}
+            />
+          )}
+        </>
+      );
+    } else if (Array.isArray(localData)) {
+      // Array editörü (title,value)
+      return (
+        <>
+          {localData.map((item, idx) => (
+            <Stack key={idx} direction="row" spacing={1} sx={{ mb: 2 }}>
+              <TextField
+                fullWidth
+                label="Title"
+                value={item.title}
+                onChange={(e) =>
+                  handleArrayItemChange(idx, "title", e.target.value)
+                }
+              />
+              <TextField
+                fullWidth
+                label="Value"
+                value={item.value}
+                onChange={(e) =>
+                  handleArrayItemChange(idx, "value", e.target.value)
+                }
+              />
+              <IconButton
+                onClick={() => handleDeleteArrayItem(idx)}
+                color="error"
+              >
+                <Delete />
+              </IconButton>
+            </Stack>
+          ))}
+          <Button
+            onClick={handleAddArrayItem}
+            variant="outlined"
+            fullWidth
+            sx={{ mb: 2 }}
+          >
+            + Yeni Ekle
+          </Button>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={useJsonEditor}
+                onChange={() => setUseJsonEditor(true)}
+                color="primary"
+              />
+            }
+            label="JSON Düzenleyici'ye geç"
+            sx={{ mb: 2 }}
+          />
+        </>
+      );
+    } else if (
+      typeof localData === "string" ||
+      typeof localData === "number" ||
+      typeof localData === "boolean" ||
+      localData === null
+    ) {
+      // Primitive tipi, normal TextField
+      return (
+        <TextField
+          fullWidth
+          label={editKey}
+          value={localData}
+          onChange={(e) => setLocalData(e.target.value)}
+          sx={{ mb: 2 }}
+        />
+      );
+    } else {
+      // Nesne ise JSON textarea
+      return (
+        <>
+          <TextField
+            label="JSON Düzenleyici"
+            multiline
+            minRows={8}
+            fullWidth
+            value={jsonEdit}
+            onChange={(e) => handleJsonChange(e.target.value)}
+            sx={{ fontFamily: "monospace", mb: 2 }}
+          />
+        </>
+      );
     }
   };
 
@@ -114,54 +271,12 @@ const DuzenleModal = ({
         <Typography
           variant="h6"
           gutterBottom
-          sx={{ textTransform: "uppercase", fontWeight: "bold",mb:3 }}
+          sx={{ textTransform: "uppercase", fontWeight: "bold", mb: 3 }}
         >
           {selectedField?.id} - {editKey} Düzenle
         </Typography>
 
-        {isArray ? (
-          <>
-            {localArray.map((item, idx) => (
-              <Stack key={idx} direction="row" spacing={1} sx={{ mb: 2 }}>
-                <TextField
-                  fullWidth
-                  label="Title"
-                  value={item.title}
-                  onChange={(e) =>
-                    handleItemChange(idx, "title", e.target.value)
-                  }
-                />
-                <TextField
-                  fullWidth
-                  label="Value"
-                  value={item.value}
-                  onChange={(e) =>
-                    handleItemChange(idx, "value", e.target.value)
-                  }
-                />
-                <IconButton onClick={() => handleDeleteItem(idx)} color="error">
-                  <Delete />
-                </IconButton>
-              </Stack>
-            ))}
-            <Button
-              onClick={handleAddItem}
-              variant="outlined"
-              fullWidth
-              sx={{ mb: 2 }}
-            >
-              + Yeni Ekle
-            </Button>
-          </>
-        ) : (
-          <TextField
-            fullWidth
-            label={editKey}
-            value={localString}
-            onChange={(e) => setLocalString(e.target.value)}
-            sx={{ mb: 2 }}
-          />
-        )}
+        {renderContent()}
 
         <Box sx={{ textAlign: "right" }}>
           <Button onClick={handleCloseEditModal} sx={{ mr: 1 }}>
@@ -175,6 +290,5 @@ const DuzenleModal = ({
     </Modal>
   );
 };
-
 
 export default DuzenleModal;
